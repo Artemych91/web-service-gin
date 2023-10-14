@@ -1,4 +1,4 @@
-module example/web-service-gin
+module github.com/Artemych91/web-service-gin
 
 go 1.21.3
 
