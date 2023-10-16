@@ -20,13 +20,25 @@ const (
 
 // getAlbums responds with the list of all albums as JSON.
 func GetAlbums(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil || page <= 0 {
+		page = 1
+	}
+
+	pageSize, err := strconv.Atoi(c.Query("pageSize"))
+	if err != nil || pageSize <= 0 {
+		pageSize = 10
+	}
+
+	offset := (page - 1) * pageSize
+
 	db, err := database.GetDB()
 	if err != nil {
 		HandleError(c, StatusInternalServerError, err)
 		return
 	}
 
-	rows, err := db.Query("SELECT * FROM albums")
+	rows, err := db.Query("SELECT * FROM albums LIMIT ? OFFSET ?", pageSize, offset)
 	if err != nil {
 		HandleError(c, StatusInternalServerError, err)
 		return
